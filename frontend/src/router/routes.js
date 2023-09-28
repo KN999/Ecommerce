@@ -1,16 +1,20 @@
 const routes = [
   {
-    path: '/hello',
+    path: '/',
     component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresAuth: true },
     children: [
       { path: '/', component: () => import('pages/IndexPage.vue') },
-      { path: '/login', component: () => import('./../components/LoginForm.vue') }
+      { path: '/cart', component: () => import('pages/CartPage.vue') },
     ]
   },
-
   {
-    path: '/login',
-    component: () => import('./../components/LoginForm.vue')
+    path: '/auth',
+    component: () => import('layouts/AuthLayout.vue'),
+    children: [
+      { path: '/login', component: () => import('pages/LoginForm.vue') },
+      { path: '/register', component: () => import('pages/RegisterForm.vue') }
+    ]
   },
 
   // Always leave this as last one,
