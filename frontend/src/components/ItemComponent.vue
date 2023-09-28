@@ -1,12 +1,19 @@
 <template>
-    <q-card class="text-center flex flex-center" style="height: 200px; width: 200px">
-        <div>
+    <q-card class="text-center flex flex-center" >
+        <div class="q-ma-lg">
+            <q-img src="https://cdn.quasar.dev/img/non-existent-image-src.png" style="height: 140px; max-width: 150px">
+                <template v-slot:error>
+                    <div class="absolute-full flex flex-center bg-grey text-black">
+                        Cannot load image
+                    </div>
+                </template>
+            </q-img>
             <span class="row"> Name: {{ item.name }}</span>
             <span class="row"> Price: ₹ {{ item.price }}</span>
             <q-btn v-if="item.quantity == 0" @click="increaseCount" label="Add to cart" color="primary" style="height: 10px; " class="row"/>
             <div v-if="item.quantity > 0">
                 <q-btn :disable="item.quantity <= 0" @click="decreaseCount"  label="-" color="primary" style="height: 10px; "/> 
-                    {{ item.quantity }} 
+                <q-btn :label="item.quantity" color="grey" class="q-ma-sm"></q-btn>
                 <q-btn @click="increaseCount" label="+" color="primary" style="height: 10px; "/>
             </div>  
         </div>
