@@ -3,9 +3,7 @@
     <q-page class="text-center" style="min-height: 20vh; width: 100vw">
       <q-card-section style="min-width: 100vw; max-height: 400px; margin: auto;">
         <div class="text-center">
-          <h3 class="text-center">Ecommerce</h3>
-          <q-btn @click="logout" label="Logout" color="deep-orange-6" style="height: 40px;" class="q-ma-sm"/> <br />
-          <q-btn @click="$router.push('/cart')" icon="shopping_cart" color="grey-6" style="height: 40px;" class="q-ma-sm"/>
+          <h3 class="text-center">Inventory</h3>
         </div>
         <q-form @submit="search" class="row flex flex-center">
           <q-input v-model="query" label="Search" outlined dense class="q-ma-sm" style="width: 20vw"/>
@@ -79,11 +77,6 @@ export default {
     updateCart(cartRes) {
       debugger;
       this.cart = { ...cartRes };
-    },
-    logout() {
-      localStorage.setItem('authToken', '');
-      this.$router.push('/login');
-      return;
     },
     search() {
       const axiosInstance = axios.create({

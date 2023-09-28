@@ -4,7 +4,6 @@
       <q-card-section style="min-width: 100vw; max-height: 400px; margin: auto;">
         <div class="text-center">
           <h3 class="text-center">Cart</h3>
-          <q-btn @click="logout" label="Logout" color="deep-orange-6" style="height: 40px;" class="q-ma-sm"/> <br />
         </div>
       </q-card-section>
     </q-page>
