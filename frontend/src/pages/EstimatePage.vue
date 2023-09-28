@@ -4,6 +4,7 @@
       <q-card-section style="min-width: 100vw; max-height: 400px; margin: auto;">
         <div class="text-center">
           <h3 class="text-center">Estimate</h3>
+          <!-- <q-btn v-if="pdfUrl" class="q-ma-sm" color="green" @click="shareViaWhatsApp">Share via WhatsApp</q-btn> -->
           <div>
             <iframe v-if="pdfUrl" :src="pdfUrl" width="100%" height="600px"></iframe>
           </div>
@@ -105,12 +106,6 @@ export default {
 
         const headers = ['Product Name', 'Price', 'Quantity', 'Overall Price'];
 
-        // const data = [
-        //   ['John Doe', '30', 'USA', '12'],
-        //   ['Jane Smith', '25', 'Canada', '21'],
-        //   ['Jane Smith', '25', 'Canada', '21'],
-        // ];
-
         const x = 10;
         const y = 20;
         const tableWidth = 180;
@@ -138,8 +133,22 @@ export default {
         const pdfBlob = doc.output('blob');
 
         this.pdfUrl = URL.createObjectURL(pdfBlob);
+        console.log("pdfURL: ",this.pdfUrl)
+        console.log("pdfBlob: ",JSON.stringify(this.pdfBlob))
       } catch (error) {
         console.error('Error generating PDF:', error);
+      }
+    },
+    shareViaWhatsApp() {
+      if (this.pdfUrl) {
+        const text = 'Check out this PDF!';
+        const url = this.pdfUrl;
+
+        // Construct the WhatsApp share link
+        const whatsappShareLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}&amp;url=${encodeURIComponent(url)}`;
+
+        // Open WhatsApp in a new window/tab
+        window.open(whatsappShareLink, '_blank');
       }
     },
   },

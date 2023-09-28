@@ -98,36 +98,6 @@ export default {
           this.hideLoader();
         })
     },
-    register() {
-      this.showLoader();
-
-      const axiosInstance = axios.create({
-        baseURL: this.url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': localStorage.getItem('authToken')
-        },
-      });
-
-      axiosInstance.get(this.url)
-      .then((response) => {
-        this.data = response.data;
-        console.log("Response: ",response);
-        this.hideLoader();
-      })
-      .catch((error) => {
-        console.error("Error fetching data: ",error);
-        this.hideLoader();
-      })
-
-      console.log("username: "+this.email);
-      console.log("password: "+this.password);
-    },
-    resetFormData() {
-      this.email = "";
-      this.password = "";
-      this.confirmPassword = "";
-    },
     showLoader() {
       this.isLoaderVisible = true;
     },
