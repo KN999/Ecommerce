@@ -6,7 +6,14 @@ const routes = [
     children: [
       { path: '/', component: () => import('pages/IndexPage.vue') },
       { path: '/cart', component: () => import('pages/CartPage.vue') },
-      { path: '/estimate', component: () => import('pages/EstimatePage.vue') },
+    ]
+  },
+  {
+    path: '/estimate',
+    component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresAuth: false },
+    children: [
+      { path: '/estimate/:estimation', component: () => import('pages/EstimatePage.vue') },
     ]
   },
   {

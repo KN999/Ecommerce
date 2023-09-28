@@ -7,7 +7,7 @@
         </div>
         <q-form @submit="search" class="row flex flex-center">
           <q-input v-model="query" label="Search" outlined dense class="q-ma-sm" style="width: 20vw"/>
-          <q-btn :disable="query.length <= 0" type="submit" label="Search" color="primary" style="height: 40px;"/>
+          <q-btn :disable="query.length <= 0" type="submit" label="Search" color="primary" style="height: 40px;" no-caps/>
         </q-form>
       </q-card-section>
     </q-page>

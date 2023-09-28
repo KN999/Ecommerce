@@ -6,7 +6,7 @@
           Ecommerce
         </q-toolbar-title>
         <q-btn v-if="isCurrentRouteHome" @click="$router.push('/cart')" icon="shopping_cart" color="grey-6" style="height: 40px;" class="q-ma-sm"/>
-        <q-btn @click="logout" label="Logout" color="primary" style="height: 40px;" class="q-ma-sm"/> <br />
+        <q-btn @click="logout" label="Logout" color="primary" style="height: 40px;" class="q-ma-sm" no-caps/> <br />
       </q-toolbar>
       <router-view />
     </q-page-container>

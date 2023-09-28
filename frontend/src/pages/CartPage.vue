@@ -6,7 +6,7 @@
           <h3 class="text-center">Cart</h3>
           <!-- <q-btn label="Generate Estimate" @click="$router.push('/cart')" icon="bill" color="orange-6" style="height: 40px;" class="q-ma-sm"/> -->
           <div>
-            <q-btn @click="$router.push('/estimate')" color="primary">Generate Estimate</q-btn>
+            <q-btn @click="addEstimate" color="primary">Generate Estimate</q-btn>
           </div>
         </div>
       </q-card-section>
@@ -39,6 +39,7 @@
 <script>
 import axios from "axios";
 import ItemComponent from "src/components/ItemComponent.vue";
+import { v4 as uuidv4 } from 'uuid';
 
 export default {
   components: {
@@ -47,6 +48,7 @@ export default {
   data() {
     return {
       cart: [],
+      uuid: '',
       columns: [
         { name: 'name', align: 'center', label: 'Product Name', field: 'name', sortable: true },
         { name: 'price', align: 'center', label: 'Price', field: 'price', sortable: true },
@@ -97,6 +99,36 @@ export default {
           console.error("Error fetching data: ", error);
           this.hideLoader();
         })
+    },
+    generateUUID() {
+      this.uuid = uuidv4().substr(0, 8);
+    },
+    async addEstimate() {
+      let payload = {
+        url: await uuidv4().substr(0, 8),
+        cart: this.cart
+      }
+
+      const axiosInstance = axios.create({
+        baseURL: this.url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('authToken')
+        },
+      });
+
+      this.showLoader();
+      axiosInstance.post("/api/estimation", payload)
+      .then((response) => {
+        if(response)
+          this.$router.push('/estimate/'+payload.url);
+
+        this.hideLoader();
+      })
+      .catch((error) => {
+        console.error("Error fetching data: ", error);
+        this.hideLoader();
+      })
     },
     showLoader() {
       this.isLoaderVisible = true;

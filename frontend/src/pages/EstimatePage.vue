@@ -2,9 +2,9 @@
   <div>
     <q-page class="text-center" style="min-height: 20vh; width: 100vw">
       <q-card-section style="min-width: 100vw; max-height: 400px; margin: auto;">
-        <div class="text-center">
-          <h3 class="text-center">Estimate</h3>
-          <!-- <q-btn v-if="pdfUrl" class="q-ma-sm" color="green" @click="shareViaWhatsApp">Share via WhatsApp</q-btn> -->
+        <div>
+            <h3 class="text-center">Estimate</h3>
+            <q-btn v-if="pdfUrl" class="q-ma-sm" color="green" @click="shareViaWhatsApp" style="height: 20px;" no-caps>Share via Whatsapp</q-btn>
           <div>
             <iframe v-if="pdfUrl" :src="pdfUrl" width="100%" height="600px"></iframe>
           </div>
@@ -43,10 +43,10 @@ export default {
     };
   },
   mounted() {
-    this.getCart();
+    this.getEstimation();
   },
   methods: {
-    getCart() {
+    getEstimation() {
       const axiosInstance = axios.create({
         baseURL: this.url, 
         headers: {
@@ -56,13 +56,13 @@ export default {
       });
 
       this.showLoader();
-      axiosInstance.get("/api/user/cart")
+      axiosInstance.get("/api/estimation/"+this.$route.params.estimation)
         .then((response) => {
+          debugger;
           let res = response.data;
-          console.log(res)
+          console.log(response)
           if(res) {
-            this.cart = res;
-            let cost = 0;
+            this.cart = res.cart;
             let estimateCart = [];
 
             this.cart.forEach((cartItem) => {
@@ -70,19 +70,10 @@ export default {
               estimateCartItem.push(cartItem.name);
               estimateCartItem.push(String(cartItem.price));
               estimateCartItem.push(String(cartItem.quantity));
-              estimateCartItem.push(String(cartItem.price * cartItem.quantity));
+              estimateCartItem.push(String(cartItem.overallPrice));
 
               estimateCart.push(estimateCartItem);
-              cost += (cartItem.price * cartItem.quantity);
             })
-
-            let estimateCartItem = [];
-              estimateCartItem.push('');
-              estimateCartItem.push('');
-              estimateCartItem.push('Total');
-              estimateCartItem.push(String(cost));
-
-              estimateCart.push(estimateCartItem);
 
             this.generatePDF(estimateCart);
           }
@@ -134,14 +125,14 @@ export default {
 
         this.pdfUrl = URL.createObjectURL(pdfBlob);
         console.log("pdfURL: ",this.pdfUrl)
-        console.log("pdfBlob: ",JSON.stringify(this.pdfBlob))
+        console.log("pdfBlob: ",JSON.stringify(pdfBlob))
       } catch (error) {
         console.error('Error generating PDF:', error);
       }
     },
     shareViaWhatsApp() {
       if (this.pdfUrl) {
-        const text = 'Check out this PDF!';
+        const text = `Check out this PDF!. Here is the link to access it. http://localhost:9000${this.$route.fullPath}`;
         const url = this.pdfUrl;
 
         // Construct the WhatsApp share link
