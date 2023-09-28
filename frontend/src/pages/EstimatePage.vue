@@ -1,0 +1,152 @@
+<template>
+  <div>
+    <q-page class="text-center" style="min-height: 20vh; width: 100vw">
+      <q-card-section style="min-width: 100vw; max-height: 400px; margin: auto;">
+        <div class="text-center">
+          <h3 class="text-center">Estimate</h3>
+          <div>
+            <iframe v-if="pdfUrl" :src="pdfUrl" width="100%" height="600px"></iframe>
+          </div>
+        </div>
+      </q-card-section>
+    </q-page>
+    <q-inner-loading
+      :showing="isLoaderVisible"
+      style="color: deepskyblue"
+      label="Please wait..."
+      label-class="text-blue"
+      label-style="font-size: 1.1em"
+    />
+  </div>
+</template>
+
+<script>
+import axios from "axios";
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import jsPDF from 'jspdf';
+
+export default {
+  data() {
+    return {
+      cart: [],
+      pdfUrl: null,
+      pdfBlobUrl: null,
+      columns: [
+        { name: 'name', align: 'center', label: 'Product Name', field: 'name', sortable: true },
+        { name: 'price', align: 'center', label: 'Price', field: 'price', sortable: true },
+        { name: 'quantity', align: 'center', label: 'Quantity', field: 'quantity', sortable: true },
+        { name: 'overallPrice', align: 'center', label: 'Overall Price', field: 'overallPrice', sortable: true },
+      ],
+      rows: [],
+      isLoaderVisible: false
+    };
+  },
+  mounted() {
+    this.getCart();
+  },
+  methods: {
+    getCart() {
+      const axiosInstance = axios.create({
+        baseURL: this.url, 
+        headers: {
+          'Content-Type': 'application/json', 
+          'Authorization': localStorage.getItem('authToken')
+        },
+      });
+
+      this.showLoader();
+      axiosInstance.get("/api/user/cart")
+        .then((response) => {
+          let res = response.data;
+          console.log(res)
+          if(res) {
+            this.cart = res;
+            let cost = 0;
+            let estimateCart = [];
+
+            this.cart.forEach((cartItem) => {
+              let estimateCartItem = [];
+              estimateCartItem.push(cartItem.name);
+              estimateCartItem.push(String(cartItem.price));
+              estimateCartItem.push(String(cartItem.quantity));
+              estimateCartItem.push(String(cartItem.price * cartItem.quantity));
+
+              estimateCart.push(estimateCartItem);
+              cost += (cartItem.price * cartItem.quantity);
+            })
+
+            let estimateCartItem = [];
+              estimateCartItem.push('');
+              estimateCartItem.push('');
+              estimateCartItem.push('Total');
+              estimateCartItem.push(String(cost));
+
+              estimateCart.push(estimateCartItem);
+
+            this.generatePDF(estimateCart);
+          }
+          
+          this.hideLoader();
+        })
+        .catch((error) => {
+          console.error("Error fetching data: ", error);
+          this.hideLoader();
+        })
+    },
+    showLoader() {
+      this.isLoaderVisible = true;
+    },
+    hideLoader() {
+      this.isLoaderVisible = false;
+    },
+    async generatePDF(data) {
+      try {
+        const doc = new jsPDF();
+
+        const headers = ['Product Name', 'Price', 'Quantity', 'Overall Price'];
+
+        // const data = [
+        //   ['John Doe', '30', 'USA', '12'],
+        //   ['Jane Smith', '25', 'Canada', '21'],
+        //   ['Jane Smith', '25', 'Canada', '21'],
+        // ];
+
+        const x = 10;
+        const y = 20;
+        const tableWidth = 180;
+        const tableHeight = 20;
+
+        const cellWidth = tableWidth / headers.length;
+        const cellHeight = tableHeight;
+
+        headers.forEach((header, index) => {
+          doc.setFillColor(150, 150, 150);
+          doc.rect(x + index * cellWidth, y, cellWidth, cellHeight);
+          doc.setTextColor(0);
+          doc.text(header, x + index * cellWidth + 5, y + cellHeight / 2, { align: 'left', valign: 'middle' });
+        });
+
+        data.forEach((row, rowIndex) => {
+          row.forEach((cell, cellIndex) => {
+            doc.setDrawColor(0);
+            doc.rect(x + cellIndex * cellWidth, y + (rowIndex + 1) * cellHeight, cellWidth, cellHeight);
+            doc.setTextColor(0);
+            doc.text(cell, x + cellIndex * cellWidth + 5, y + (rowIndex + 1.5) * cellHeight, { align: 'left', valign: 'middle' });
+          });
+        });
+
+        const pdfBlob = doc.output('blob');
+
+        this.pdfUrl = URL.createObjectURL(pdfBlob);
+      } catch (error) {
+        console.error('Error generating PDF:', error);
+      }
+    },
+  },
+  beforeDestroy() {
+    if (this.pdfBlobUrl) {
+      URL.revokeObjectURL(this.pdfBlobUrl);
+    }
+  },
+};
+</script>
