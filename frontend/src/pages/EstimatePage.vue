@@ -135,10 +135,8 @@ export default {
         const text = `Check out this PDF!. Here is the link to access it. http://localhost:9000${this.$route.fullPath}`;
         const url = this.pdfUrl;
 
-        // Construct the WhatsApp share link
         const whatsappShareLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}&amp;url=${encodeURIComponent(url)}`;
 
-        // Open WhatsApp in a new window/tab
         window.open(whatsappShareLink, '_blank');
       }
     },
