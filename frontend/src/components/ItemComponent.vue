@@ -89,6 +89,8 @@ export default {
                     if(cart) {
                         this.$emit("update-cart", cart);
                     }
+
+                    alert(response.data.message)
                 }
             })
             .catch((error) => {

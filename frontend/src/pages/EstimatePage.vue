@@ -58,9 +58,7 @@ export default {
       this.showLoader();
       axiosInstance.get("/api/estimate/"+this.$route.params.estimation)
         .then((response) => {
-          debugger;
           let res = response.data;
-          console.log(response)
           if(res) {
             this.cart = res.cart;
             let estimateCart = [];

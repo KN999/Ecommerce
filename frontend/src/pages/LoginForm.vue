@@ -4,7 +4,7 @@
       <q-card class="flex flex-center" style="height: 100vh; width: 100vw">
         <q-card-section style="max-width: 400px; max-height: 400px; margin: auto">
           <h3 class="text-center">Login</h3>
-          <q-form @submit="loginFn">
+          <q-form @submit="validateForm">
             <q-input
               v-model="email"
               label="Email"
@@ -21,7 +21,7 @@
               class="q-ma-sm"
             />
             <div class="text-center">
-              <q-btn type="submit" label="Login" color="primary"/>
+              <q-btn :disable="!(email && password)" type="submit" label="Login" color="primary"/>
             </div>
             <div class="q-ma-sm">
               New here? <router-link :to="{ path: '/register' }">Register</router-link> with us
@@ -56,6 +56,15 @@ export default {
   },
   methods: {
     ...mapActions('auth', ['login']),
+    validateForm() {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (emailRegex.test(this.email)) {
+        this.loginFn();
+      } else {
+        alert("Please enter correct email!");
+      }
+    },
     loginFn() {
       this.showLoader();
       axios.post("/api/auth/login", {
@@ -68,15 +77,14 @@ export default {
           localStorage.setItem('authToken', response.data.token)
           this.hideLoader();
           this.$router.push({ path: '/' });
+        } else {
+          alert(JSON.stringify(response.data.message));
+          this.hideLoader();
         }
       })
       .catch((error) => {
-        // console.error("Error fetching data: ",error);
         this.hideLoader();
       })
-
-      console.log("username: "+this.email);
-      console.log("password: "+this.password);
     },
     resetFormData() {
       this.email = "";

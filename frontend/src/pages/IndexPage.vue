@@ -75,7 +75,6 @@ export default {
         })
     },
     updateCart(cartRes) {
-      debugger;
       this.cart = cartRes;
     },
     search() {
@@ -88,17 +87,21 @@ export default {
       });
 
       this.showLoader();
-      axiosInstance.get("http://localhost:3000/api/inventory/items/"+this.query)
+      axiosInstance.get("/api/inventory/items/"+this.query)
       .then((response) => {
-        debugger
-        let data = response.data;
-        this.items = [];
-        if(data) {
-          this.items.push(data);
-          this.updateItemComp++;
+        if(response.data) {
+          let data = response.data;
+            this.items = [];
+            if (data) {
+              this.items.push(data);
+              this.updateItemComp++;
+            }
+            console.log("Response: ", response);
+            this.resetFormData();
+        } else {
+          alert("Could not find item with name: "+this.query);
         }
-        console.log("Response: ",response);
-        this.resetFormData();
+        
         this.hideLoader();
       })
       .catch((error) => {

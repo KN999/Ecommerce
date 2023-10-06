@@ -5,7 +5,7 @@
         <div class="text-center">
           <h3 class="text-center">Cart</h3>
           <!-- <q-btn label="Generate Estimate" @click="$router.push('/cart')" icon="bill" color="orange-6" style="height: 40px;" class="q-ma-sm"/> -->
-          <div>
+          <div v-if="cart.length > 1">
             <q-btn @click="addEstimate" color="primary">Generate Estimate</q-btn>
           </div>
         </div>
@@ -14,7 +14,7 @@
     <!-- <div v-if="cart" v-for="(item, index) in cart" :key="index" class="row flex flex-center"> -->
       <!-- <item-component :item="item" :cart="cart" @update-cart="updateCart" :key="updateItemComp"></item-component> -->
     <!-- </div> -->
-    <div v-if="true" class="row flex flex-center">
+    <div v-if="cart.length > 1" class="row flex flex-center">
       <q-table
           title=""
           :rows="cart"
@@ -23,8 +23,8 @@
           hide-bottom
         />
       </div>
-    <div v-else>
-      Cart is Empty
+    <div v-else class="text-center">
+      <h3>Cart is Empty</h3>
     </div>
     <q-inner-loading
       :showing="isLoaderVisible"
