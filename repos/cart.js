@@ -1,7 +1,7 @@
 const { MongoClient } = require("mongodb");
 const config = require('../config/config');
 
-async function addItem(item) {
+async function updateCart(username, cart) {
     const client = new MongoClient(config.dbUrl, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -11,43 +11,12 @@ async function addItem(item) {
         await client.connect();
 
         const database = client.db('ecommerce');
-        const collection = database.collection('item');
+        const collection = database.collection('cart');
 
-        const newItem= {
-            name: item.name,
-            price: item.price,
-            image: item.image,
-        };
-
-        const result = await collection.insertOne(newItem);
-
-        if(result !== null && result !== undefined)
-            console.log(`Item inserted with ID: ${result.insertedId}`);
-
-        return result;
-    } catch (error) {
-        console.error('Error inserting user:', error);
-    } finally {
-        client.close();
-    }
-}
-
-async function findItem(itemName) {
-    const client = new MongoClient(config.dbUrl, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    });
-
-    try {
-        await client.connect();
-
-        const database = client.db('ecommerce');
-        const collection = database.collection('item');
-
-        const result = await collection.findOne({ name: itemName });
+        const result = await collection.replaceOne({ username: username }, { username: username, cartItem: cart });
 
         if(result)
-            console.log(`Fount item with ID: ${result}`);
+            console.log(`Fount user with ID: ${result}`);
 
         return result;
     } catch (error) {
@@ -57,7 +26,7 @@ async function findItem(itemName) {
     }
 }
 
-async function removeItem(itemName) {
+async function findCart(username) {
     const client = new MongoClient(config.dbUrl, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -67,10 +36,42 @@ async function removeItem(itemName) {
         await client.connect();
 
         const database = client.db('ecommerce');
-        const collection = database.collection('item');
+        const collection = database.collection('cart');
 
-        const result = await collection.deleteOne({ name: itemName });
-        console.log(`Deleted ${result.deletedCount} document`);
+        const result = await collection.findOne({ username: username });
+
+        if(result)
+            console.log(`Fount user with ID: ${result}`);
+
+        return result.cartItem;
+    } catch (error) {
+        console.error('Error inserting user:', error);
+    } finally {
+        client.close();
+    }
+}
+
+async function createCart(username) {
+    const client = new MongoClient(config.dbUrl, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    });
+
+    try {
+        await client.connect();
+
+        const database = client.db('ecommerce');
+        const collection = database.collection('cart');
+
+        const cart = {
+            username: username,
+            cartItem: [],
+        };
+
+        const result = await collection.insertOne(cart);
+
+        if(result !== null && result !== undefined)
+            console.log(`User inserted with ID: ${result.insertedId}`);
 
         return result;
     } catch (error) {
@@ -80,8 +81,8 @@ async function removeItem(itemName) {
     }
 }
 
-module.exports = {
-    addItem,
-    removeItem,
-    findItem
-}
+module.exports = { 
+  updateCart,
+  findCart,
+  createCart
+};

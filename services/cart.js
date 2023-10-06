@@ -1,13 +1,13 @@
-const userRepo = require("../repos/user");
+const cartRepo = require("../repos/cart");
 const inventoryRepo = require("../repos/inventory");
-const authService = require("../services/auth");
+const authService = require("./auth");
 
 async function getCart(req, res) {
     try {
         let token = req.token;
         let username = req.username;
         console.log("THis is getcart username: ",username);
-        let { cart } = await userRepo.findUser(username);
+        let cart = await cartRepo.findCart(username);
 
         return res.status(200).json(cart);
 
@@ -21,7 +21,7 @@ async function updateCart(req, res) {
     try {
         const { operation, itemName } = req.body;
         let username = req.username;
-        let user = await userRepo.findUser(username);
+        let cart = await cartRepo.findCart(username);
         let item = await inventoryRepo.findItem(itemName); 
 
         if(!item) {
@@ -31,9 +31,9 @@ async function updateCart(req, res) {
         }
 
         if(operation.toLowerCase() == "add") {
-            return addToCart(req, res, user, item);
+            return addToCart(req, res, username, cart, item);
         } else if(operation.toLowerCase() == "delete") {
-            return deleteFromCart(req, res, user, item);
+            return deleteFromCart(req, res, username, cart, item);
         }
 
     } catch(error) {
@@ -42,16 +42,16 @@ async function updateCart(req, res) {
     }
 }
 
-async function addToCart(req, res, user, item) {
+async function addToCart(req, res, username, cart, item) {
     try {
-        const itemIndex = user.cart.findIndex(cartItem => cartItem.name == item.name);
+        const itemIndex = cart.findIndex(cartItem => cartItem.name == item.name);
 
         if(itemIndex == -1) 
-            user.cart.push({ quantity: 1, ...item });
+            cart.push({ quantity: 1, ...item });
         else
-            user.cart[itemIndex].quantity++ ;
+            cart[itemIndex].quantity++ ;
 
-        let result = await userRepo.saveUser(user);
+        let result = await cartRepo.updateCart(username, cart);
 
         if(!result) {
             return res.status(500).json({
@@ -61,7 +61,7 @@ async function addToCart(req, res, user, item) {
 
         return res.status(200).json({
             message: "Item added to cart successfully",
-            cart: user.cart
+            cart: cart
         });
 
     } catch(error) {
@@ -70,22 +70,22 @@ async function addToCart(req, res, user, item) {
     }
 }
 
-async function deleteFromCart(req, res, user, item) {
+async function deleteFromCart(req, res, username, cart, item) {
     try {
-        const itemIndex = user.cart.findIndex(cartItem => cartItem.name == item.name);
+        const itemIndex = cart.findIndex(cartItem => cartItem.name == item.name);
 
         if(itemIndex != -1) {
-            if(user.cart[itemIndex].quantity > 1)
-                user.cart[itemIndex].quantity--;
+            if(cart[itemIndex].quantity > 1)
+                cart[itemIndex].quantity--;
             else
-                user.cart = user.cart.filter((cartItem) => { return cartItem.name != item.name });
+                cart = cart.filter((cartItem) => { return cartItem.name != item.name });
         }
 
-        let result = await userRepo.saveUser(user);
+        let result = await cartRepo.updateCart(username, cart);
 
         return res.status(200).json({
             message: "Item delteted from cart successfully",
-            cart: user.cart
+            cart: cart
         });
 
     } catch(error) {

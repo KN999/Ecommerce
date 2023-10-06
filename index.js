@@ -1,9 +1,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const authRoutes = require("./routes/auth");
-const userRoutes = require("./routes/user");
+const cartRoutes = require("./routes/cart");
 const inventoryRoutes = require("./routes/inventory");
-const estimationRoutes = require("./routes/estimation");
+const estimateRoutes = require("./routes/estimate");
 const { extractToken } = require("./utils/util");
 const cors = require('cors');
 
@@ -15,9 +15,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 app.use("/api/auth", authRoutes);
-app.use("/api/user", extractToken, userRoutes);
+app.use("/api/cart", extractToken, cartRoutes);
 app.use("/api/inventory", extractToken, inventoryRoutes);
-app.use("/api/estimation", extractToken, estimationRoutes);
+app.use("/api/estimate", extractToken, estimateRoutes);
 
 const PORT = process.env.PORT || 3000;
 

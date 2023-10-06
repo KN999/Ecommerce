@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const config = require("../config/config");
 const authRepo = require("../repos/auth");
+const cartRepo = require("../repos/cart");
 
 const saltRounds = 10;
 
@@ -19,6 +20,7 @@ async function registerUser(req, res) {
 
         const hashedPassword = await bcrypt.hash(password, saltRounds);
         let result = await authRepo.registerUser(username, hashedPassword);
+        let userCart = await cartRepo.createCart(username);
         const token = jwt.sign({ username: username }, config.secretKey, {
             expiresIn: "1h",
         });

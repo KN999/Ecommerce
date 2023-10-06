@@ -1,19 +1,19 @@
-const userService = require("../services/user");
+const cartService = require("../services/cart");
 
 async function addToCart(req, res) {
-  return userService.addToCart(req, res);
+  return cartService.addToCart(req, res);
 }
 
 async function getCart(req, res) {
-  return userService.getCart(req, res);
+  return cartService.getCart(req, res);
 }
 
 async function updateCart(req, res) {
-  return userService.updateCart(req, res);
+  return cartService.updateCart(req, res);
 }
 
 async function deleteFromCart(req, res) {
-  return userService.deleteFromCart(req, res);
+  return cartService.deleteFromCart(req, res);
 }
 
 module.exports = { 

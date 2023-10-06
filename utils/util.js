@@ -7,8 +7,8 @@ function extractToken(req, res, next) {
     let token = null;
 
     console.log("Estimation url: ",req.method.toLowerCase() == "get" )
-    console.log("Estimation includes: ",req.originalUrl.includes('/api/estimation'))
-    if(req.method.toLowerCase() == "get" && req.originalUrl.includes('/api/estimation')) {
+    console.log("Estimation includes: ",req.originalUrl.includes('/api/estimate'))
+    if(req.method.toLowerCase() == "get" && req.originalUrl.includes('/api/estimate')) {
         next();
     } else {
         if (!authHeader || !authHeader.startsWith('Bearer ')) {

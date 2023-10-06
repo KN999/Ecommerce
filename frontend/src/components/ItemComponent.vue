@@ -43,9 +43,9 @@ export default {
         let itemCnt = -1;
         console.log("Cart: ", this.cart);
 
-        const itemIndex = this.cart.findIndex( (cartItem) => { return cartItem.name == this.item.name; });
-        console.log("itemIndex: ", itemIndex);
-        itemCnt = (itemIndex == -1)? 0 : this.cart[itemIndex].quantity;
+        const item = this.cart.find( (cartItem) => { return cartItem.name == this.item.name; });
+        console.log("itemIndex: ", item);
+        itemCnt = (item)? item.quantity : 0;
         console.log("itemCnt: ", itemCnt);
         this.item.quantity = itemCnt;
         console.log("Item Qunatity: ", this.item.quantity);
@@ -80,7 +80,7 @@ export default {
 
             this.showLoader();
 
-            axiosInstance.patch("/api/user/cart", payload)
+            axiosInstance.patch("/api/cart", payload)
             .then((response) => {
                 this.hideLoader();
                 if (response.data) {

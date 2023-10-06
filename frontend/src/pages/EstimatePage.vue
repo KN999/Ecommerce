@@ -56,7 +56,7 @@ export default {
       });
 
       this.showLoader();
-      axiosInstance.get("/api/estimation/"+this.$route.params.estimation)
+      axiosInstance.get("/api/estimate/"+this.$route.params.estimation)
         .then((response) => {
           debugger;
           let res = response.data;

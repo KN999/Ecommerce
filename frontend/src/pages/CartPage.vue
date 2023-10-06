@@ -73,7 +73,7 @@ export default {
       });
 
       this.showLoader();
-      axiosInstance.get("/api/user/cart")
+      axiosInstance.get("/api/cart")
         .then((response) => {
           let res = response.data;
           console.log(res)
@@ -118,7 +118,7 @@ export default {
       });
 
       this.showLoader();
-      axiosInstance.post("/api/estimation", payload)
+      axiosInstance.post("/api/estimate", payload)
       .then((response) => {
         if(response)
           this.$router.push('/estimate/'+payload.url);

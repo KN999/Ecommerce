@@ -12,13 +12,11 @@ async function registerUser(username, password) {
         await client.connect();
 
         const database = client.db('ecommerce');
-        const collection = database.collection('users');
+        const collection = database.collection('user');
 
         const newUser = {
             username: username,
             password: password,
-            cart: [],
-            order: []
         };
 
         const result = await collection.insertOne(newUser);
@@ -44,7 +42,7 @@ async function findUser(username) {
         await client.connect();
 
         const database = client.db('ecommerce');
-        const collection = database.collection('users');
+        const collection = database.collection('user');
 
         const result = await collection.findOne({ username: username });
 

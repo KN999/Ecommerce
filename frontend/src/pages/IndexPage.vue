@@ -60,7 +60,7 @@ export default {
       });
 
       this.showLoader();
-      axiosInstance.get("/api/user/cart")
+      axiosInstance.get("/api/cart")
         .then((response) => {
           let res = response.data;
           console.log(res)
@@ -76,7 +76,7 @@ export default {
     },
     updateCart(cartRes) {
       debugger;
-      this.cart = { ...cartRes };
+      this.cart = cartRes;
     },
     search() {
       const axiosInstance = axios.create({
@@ -91,10 +91,10 @@ export default {
       axiosInstance.get("http://localhost:3000/api/inventory/items/"+this.query)
       .then((response) => {
         debugger
-        this.data = response.data;
+        let data = response.data;
         this.items = [];
-        if(this.data) {
-          this.items.push(this.data);
+        if(data) {
+          this.items.push(data);
           this.updateItemComp++;
         }
         console.log("Response: ",response);
